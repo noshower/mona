@@ -25,7 +25,7 @@ const plugin: IPlugin = ctx => {
         const compiler = webpack(webpackConfig);
         const { cwd, projectConfig } = builder.configHelper;
         const staticDir = path.join(cwd, projectConfig.output);
-        const port = args.port || projectConfig.dev?.port || DEFAULT_PORT;
+        const port = webpackConfig.devServer?.port || args.port || projectConfig.dev?.port || DEFAULT_PORT;
 
         const devServer = new WebpackDevServer(
           {
@@ -45,9 +45,10 @@ const plugin: IPlugin = ctx => {
             client: {
               overlay: {
                 errors: true,
-                warnings: false
-              }
-            }
+                warnings: false,
+              },
+            },
+            ...webpackConfig.devServer,
           },
           compiler,
         );
