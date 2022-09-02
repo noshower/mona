@@ -48,7 +48,7 @@ class ConfigHelper {
   }
 
   get isDev(): boolean {
-    return process.env.NODE_ENV !== 'production'
+    return process.env.NODE_ENV !== 'production';
   }
 
   readAllConfig() {
@@ -64,7 +64,7 @@ class ConfigHelper {
       const projectConfig = readConfig<T>(fullConfigPath);
       return projectConfig;
     }
-    return {} as T
+    return {} as T;
   }
 }
 

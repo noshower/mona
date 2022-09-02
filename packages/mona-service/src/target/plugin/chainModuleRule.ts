@@ -112,6 +112,7 @@ function createLessRule(webpackConfig: Config, configHelper: ConfigHelper) {
       sourceMap: configHelper.isDev,
       lessOptions: {
         math: 'always',
+        modifyVars: configHelper.projectConfig.theme,
         javascriptEnabled: true,
       },
     });
@@ -137,7 +138,7 @@ function createNodeModulesLessRule(webpackConfig: Config, configHelper: ConfigHe
     .loader(require.resolve('less-loader'))
     .options({
       lessOptions: {
-        // modifyVars: theme,
+        modifyVars: configHelper.projectConfig.theme,
         javascriptEnabled: true,
       },
     });
