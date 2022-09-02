@@ -32,8 +32,8 @@ function commonCssRule(styleRule: Config.Rule<Config.Module>, configHelper: Conf
     .loader(require.resolve('css-loader'))
     .options({
       importLoaders: 2,
+      esModule: true,
       modules: {
-        auto: true,
         localIdentName: '[local]_[hash:base64:5]',
         getLocalIdent: (loaderContext: any, localIdentName: string, localName: string, options: any) => {
           // 配合PostcssPreSelector插件
