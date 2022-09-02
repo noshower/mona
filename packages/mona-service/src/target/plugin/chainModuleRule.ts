@@ -1,82 +1,60 @@
 import path from 'path';
 import Config from 'webpack-chain';
-import loaderUtils from 'loader-utils';
 
 import ConfigHelper from '@/ConfigHelper';
 
 import { genAlias } from './chainResolve';
 import { MonaPlugins } from '@/plugins';
+import { appSrcPath } from './utils';
 
 import { TARGET } from './constants';
 
 export function chainModuleRule(webpackConfig: Config, configHelper: ConfigHelper) {
-  createJsRule(webpackConfig, configHelper);
   createCssRule(webpackConfig, configHelper);
   createLessRule(webpackConfig, configHelper);
   createAssetRule(webpackConfig, configHelper);
+  createNodeModulesLessRule(webpackConfig, configHelper);
+  createJsRule(webpackConfig, configHelper);
 }
 
-function commonCssRule(styleRule: Config.Rule<Config.Module>, configHelper: ConfigHelper) {
+const commonCssRule = (
+  styleRule: Config.Rule<Config.Module>,
+  configHelper: ConfigHelper,
+  cssOptions: Record<string, any>,
+) => {
   styleRule.use('style-loader').when(
     configHelper.isDev,
     r => r.loader(require.resolve('style-loader')),
     r => r.loader(MonaPlugins.MiniCssExtractPlugin.loader),
   );
-  const { typings } = configHelper.projectConfig.abilities?.css || { typings: false };
-  typings &&
-    styleRule
-      .use('@teamsupercell/typings-for-css-modules-loader')
-      .loader(require.resolve('@teamsupercell/typings-for-css-modules-loader'));
-  styleRule
-    .use('cssLoader')
-    .loader(require.resolve('css-loader'))
-    .options({
-      importLoaders: 2,
-      esModule: true,
-      modules: {
-        localIdentName: '[local]_[hash:base64:5]',
-        getLocalIdent: (loaderContext: any, localIdentName: string, localName: string, options: any) => {
-          // 配合PostcssPreSelector插件
-          if (localName === configHelper.buildId) {
-            return localName;
-          }
 
-          if (!options.context) {
-            options.context = loaderContext.rootContext;
-          }
+  styleRule.use('css-loader').loader(require.resolve('css-loader')).options(cssOptions);
 
-          const request = path.relative(options.context, loaderContext.resourcePath).replace(/\\/g, '/');
-
-          options.content = `${options.hashPrefix + request}+${localName}`;
-
-          localIdentName = localIdentName.replace(/\[local\]/gi, localName);
-
-          const hash = loaderUtils.interpolateName(loaderContext, localIdentName, options);
-
-          return hash;
-        },
-      },
-    });
   styleRule
     .use('postcss-loader')
     .loader(require.resolve('postcss-loader'))
     .options({
       postcssOptions: {
         plugins: [
+          require('postcss-flexbugs-fixes'),
           [
-            path.join(__dirname, '../../plugins/postcss/PostcssPreSelector.js'),
-            { selector: `#${configHelper.buildId}` },
+            require('postcss-preset-env'),
+            {
+              autoprefixer: true,
+              stage: 3,
+            },
           ],
         ],
+        sourceMap: configHelper.isDev,
       },
     });
 
   return styleRule;
-}
+};
 
 function createJsRule(webpackConfig: Config, configHelper: ConfigHelper) {
   const { projectConfig, cwd } = configHelper;
-  const jsRule = webpackConfig.module.rule('js').test(/\.((j|t)sx?)$/i);
+  const jsRule = webpackConfig.module.rule('app-src-ts').test(/\.((j|t)sx?)$/i);
 
   jsRule
     .use('babel')
@@ -105,6 +83,7 @@ function createJsRule(webpackConfig: Config, configHelper: ConfigHelper) {
           path.join(__dirname, '../../plugins/babel/BabelPluginMultiTarget.js'),
           { target: TARGET, context: cwd, alias: genAlias() },
         ],
+        [require.resolve('babel-plugin-import'), { libraryName: 'antd', libraryDirectory: 'es', style: true }, 'antd'],
       ].filter(Boolean),
     });
   jsRule
@@ -114,11 +93,23 @@ function createJsRule(webpackConfig: Config, configHelper: ConfigHelper) {
 }
 
 function createLessRule(webpackConfig: Config, configHelper: ConfigHelper) {
-  const lessRule = webpackConfig.module.rule('less').test(/\.less$/i);
-  commonCssRule(lessRule, configHelper)
+  const lessRule = webpackConfig.module
+    .rule('app-src-less')
+    .test(/\.less$/i)
+    .include.add(appSrcPath)
+    .end();
+
+  commonCssRule(lessRule, configHelper, {
+    esModule: true,
+    sourceMap: configHelper.isDev,
+    modules: {
+      localIdentName: '[local]_[hash:base64:5]',
+    },
+  })
     .use('less')
     .loader('less-loader')
     .options({
+      sourceMap: configHelper.isDev,
       lessOptions: {
         math: 'always',
         javascriptEnabled: true,
@@ -126,9 +117,46 @@ function createLessRule(webpackConfig: Config, configHelper: ConfigHelper) {
     });
 }
 
+function createNodeModulesLessRule(webpackConfig: Config, configHelper: ConfigHelper) {
+  const lessRule = webpackConfig.module
+    .rule('node-modules-less')
+    .test(/\.less$/i)
+    .include.add(/node_modules/)
+    .end();
+
+  lessRule.use('style-loader').when(
+    configHelper.isDev,
+    r => r.loader(require.resolve('style-loader')),
+    r => r.loader(MonaPlugins.MiniCssExtractPlugin.loader),
+  );
+
+  lessRule.use('css-loader').loader(require.resolve('css-loader'));
+
+  lessRule
+    .use('less-loader')
+    .loader(require.resolve('less-loader'))
+    .options({
+      lessOptions: {
+        // modifyVars: theme,
+        javascriptEnabled: true,
+      },
+    });
+}
+
 function createCssRule(webpackConfig: Config, configHelper: ConfigHelper) {
-  const cssRule = webpackConfig.module.rule('css').test(/\.css$/i);
-  commonCssRule(cssRule, configHelper);
+  const cssRule = webpackConfig.module
+    .rule('app-src-css')
+    .test(/\.css$/i)
+    .include.add(appSrcPath)
+    .end();
+
+  commonCssRule(cssRule, configHelper, {
+    esModule: true,
+    sourceMap: configHelper.isDev,
+    modules: {
+      localIdentName: '[local]_[hash:base64:5]',
+    },
+  });
 }
 
 function createAssetRule(webpackConfig: Config, configHelper: ConfigHelper) {
@@ -136,13 +164,17 @@ function createAssetRule(webpackConfig: Config, configHelper: ConfigHelper) {
   const { projectConfig } = configHelper;
 
   webpackConfig.module
-    .rule('img')
+    .rule('app-src-img')
     .test(/\.(png|jpe?g|gif|webp)$/i)
+    .include.add(appSrcPath)
+    .end()
     .set('type', resourceType);
 
   webpackConfig.module
-    .rule('svg')
+    .rule('app-src-svg')
     .test(/\.svg$/i)
+    .include.add(appSrcPath)
+    .end()
     .when(
       !!projectConfig.transformSvgToComponentInWeb,
       s => s.use('@svgr/webpack').loader(require.resolve('@svgr/webpack')),
@@ -150,7 +182,9 @@ function createAssetRule(webpackConfig: Config, configHelper: ConfigHelper) {
     );
 
   webpackConfig.module
-    .rule('font')
+    .rule('app-src-font')
     .test(/\.(ttf|eot|woff|woff2)$/i)
+    .include.add(appSrcPath)
+    .end()
     .set('type', resourceType);
 }
