@@ -26,8 +26,6 @@ export interface ProjectConfig {
   enableMultiBuild?: boolean;
   compilerOptimization?: boolean;
   transformSvgToComponentInWeb?: boolean;
-  // 修改主题色
-  theme?: Record<string, string>;
   abilities?: {
     define?: Record<string, string>;
     copy?: PluginOptions;
@@ -37,7 +35,8 @@ export interface ProjectConfig {
       };
       typings?: boolean;
     };
-
+    // 修改主题色
+    theme?: Record<string, string>;
     // default: false
     sourceMap?: Config.DevTool;
     // default: { "@": "./src/" }
