@@ -17,7 +17,7 @@ class CopyPublicPlugin {
 
   apply(compiler: Compiler) {
     const { cwd, projectConfig } = this.configHelper;
-    const publicPath = path.join(cwd, PUBLIC_PATH_NAME);
+    const publicPath = path.join(cwd, projectConfig.abilities?.staticPath || PUBLIC_PATH_NAME);
     const { patterns = [], options } = projectConfig?.abilities?.copy || { patterns: [] };
 
     if (fs.existsSync(publicPath)) {

@@ -37,6 +37,7 @@ export interface ProjectConfig {
     };
     // 修改主题色
     theme?: Record<string, string>;
+    staticPath?: string;
     // default: false
     sourceMap?: Config.DevTool;
     // default: { "@": "./src/" }
