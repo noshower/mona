@@ -107,7 +107,7 @@
     "typescript-transform-paths": "^2.2.4"
   },
   "publishConfig": {
-    "registry": "http://localhost:4873"
+    "registry": "http://nexus.darcytech.com/repository/npm-hosted/"
   },
   "gitHead": "cc5aa5283af595fd7d8a7b4921f54e2797504edd"
 }
