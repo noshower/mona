@@ -38,6 +38,9 @@ export interface ProjectConfig {
     // 修改主题色
     theme?: Record<string, string>;
     staticPath?: string;
+    bodyScripts?: Array<string | { src: string; defer?: boolean; async?: boolean }>;
+    headScripts?: Array<string | { src: string; defer?: boolean; async?: boolean }>;
+    links?: Array<{ href: string; ref: string }>;
     // default: false
     sourceMap?: Config.DevTool;
     // default: { "@": "./src/" }

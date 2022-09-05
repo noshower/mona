@@ -1,6 +1,8 @@
 import Config from 'webpack-chain';
 import ConfigHelper from '@/ConfigHelper';
 import { MonaPlugins } from '@/plugins';
+// @ts-ignore
+import HtmlWebpackTagsPlugin from '@darcytech/html-webpack-tags-plugin';
 
 import getEnv from '../utils/getEnv';
 import { TARGET, genPluginHtml } from './constants';
@@ -8,6 +10,7 @@ import path from 'path';
 
 export function chainPlugins(webpackConfig: Config, configHelper: ConfigHelper) {
   const { cwd, projectConfig } = configHelper;
+  const { bodyScripts = [], headScripts = [], links = [] } = projectConfig.abilities || {};
   const {
     CopyPublicPlugin,
     ConfigHMRPlugin,
@@ -44,6 +47,13 @@ export function chainPlugins(webpackConfig: Config, configHelper: ConfigHelper) 
       },
     }),
   );
+  webpackConfig.plugin('HtmlWebpackTagsPlugin').use(HtmlWebpackTagsPlugin, [
+    {
+      bodyScripts,
+      headScripts,
+      links,
+    },
+  ]);
   webpackConfig.plugin('DefinePlugin').use(DefinePlugin, [
     {
       ...getEnv(TARGET, cwd),

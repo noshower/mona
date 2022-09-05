@@ -36,6 +36,7 @@
     "@bytedance/mona-max": "0.2.24",
     "@bytedance/mona-runtime": "0.2.24",
     "@bytedance/mona-shared": "0.2.24",
+    "@darcytech/html-webpack-tags-plugin": "^1.1.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
     "@svgr/webpack": "^5.5.0",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
