@@ -181,7 +181,7 @@ class MiniAssetsPlugin {
     // add new depenpencies
     compiler.hooks.afterCompile.tap(this.pluginName, compilation => {
       const { cwd, appConfig } = this.configHelper;
-      const deps = ['app.config.ts', 'app.config.js'];
+      const deps = ['mona.app.config.ts', 'mona.app.config.js'];
       // loader里
       appConfig.pages.forEach(page => {
         deps.push(path.join(`./src/${page}`, '..', 'page.config.js'));

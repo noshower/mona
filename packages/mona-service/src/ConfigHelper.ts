@@ -53,7 +53,8 @@ class ConfigHelper {
 
   readAllConfig() {
     this.projectConfig = merge(genDefaultProjectConfig(this.cwd), this._readConfig<ProjectConfig>('mona.config'));
-    this.appConfig = merge(DEFAULT_APP_CONFIG, this._readConfig<AppConfig>('app.config'));
+    // app.config 调整为 mona.app.config, 因为与 @darcytech/create-app 冲突
+    this.appConfig = merge(DEFAULT_APP_CONFIG, this._readConfig<AppConfig>('mona.app.config'));
     this.entryPath = searchScriptFile(path.resolve(this.cwd, this.projectConfig.input));
   }
 
