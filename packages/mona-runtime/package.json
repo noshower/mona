@@ -33,8 +33,7 @@
     "@bytedance/mona-shared": "0.2.27"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "http://nexus.darcytech.com/repository/npm-hosted/"
   },
   "gitHead": "cc5aa5283af595fd7d8a7b4921f54e2797504edd"
 }

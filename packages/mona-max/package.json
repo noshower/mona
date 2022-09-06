@@ -34,7 +34,6 @@
     "ws": "^8.4.2"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "http://nexus.darcytech.com/repository/npm-hosted/"
   }
 }

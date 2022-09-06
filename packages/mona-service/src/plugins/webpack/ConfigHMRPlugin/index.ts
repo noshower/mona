@@ -13,7 +13,7 @@ class ConfigHMRPlugin {
     this.configHelper = configHelper;
     this.entryModule = isPlugin ? new PluginEntryModule(configHelper) : new WebEntryModule(configHelper);
   }
-  
+
   apply(compiler: Compiler) {
     // Applying a webpack compiler to the virtual module
     this.entryModule.module.apply(compiler);
@@ -29,9 +29,11 @@ class ConfigHMRPlugin {
     }
 
     // watch file
-    chokidar.watch(['**/page.config.ts', '**/page.config.js', 'app.config.ts', 'app.config.js'], {
-      ignored: /node_modules/
-    }).on('all', (_, path) => {
+    // todo 只是将 app.config 改成了 mona.app.config
+    chokidar
+      .watch(['**/page.config.ts', '**/page.config.js', 'mona.app.config.ts', 'mona.app.config.js'], {
+        ignored: /node_modules/
+      }).on('all', (_, path) => {
       // app.config page.config
       patchUpdateModule(path)
     })

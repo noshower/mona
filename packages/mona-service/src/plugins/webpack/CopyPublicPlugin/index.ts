@@ -17,7 +17,10 @@ class CopyPublicPlugin {
 
   apply(compiler: Compiler) {
     const { cwd, projectConfig } = this.configHelper;
-    const publicPath = path.join(cwd, PUBLIC_PATH_NAME);
+    // todo 期望官方支持下 staticPath
+    // @ts-ignore
+    const publicPath = projectConfig.abilities?.staticPath || path.join(cwd, PUBLIC_PATH_NAME);
+
     const { patterns = [], options } = projectConfig?.abilities?.copy || { patterns: [] };
 
     if (fs.existsSync(publicPath)) {

@@ -28,8 +28,7 @@
     "react-router-dom": "^5.2.0"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "http://nexus.darcytech.com/repository/npm-hosted/"
   },
   "sideEffects": false,
   "author": "zhangxiaowei.chris@bytedance.com",

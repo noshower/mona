@@ -43,8 +43,7 @@
     "typescript-transform-paths": "^2.2.4"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "http://nexus.darcytech.com/repository/npm-hosted/"
   },
   "peerDependencies": {
     "react": "^17.0.2"

@@ -15,8 +15,7 @@
   "author": "zhangxiaowei.chris@bytedance.com",
   "license": "MIT",
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "http://nexus.darcytech.com/repository/npm-hosted/"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^10.2.0",
