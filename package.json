@@ -15,7 +15,9 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:c": "jest --coverage",
-    "release": "node ./scripts/release.js"
+    "release": "node ./scripts/release.js",
+    "prepublish": "lerna run build",
+    "publish": "cd packages/mona && npm publish && cd ../mona-cli && npm publish && cd ../mona-clients/mona-client-mini && npm publish && cd ../mona-client-plugin && npm publish && cd ../mona-client-web && npm publish && cd ../../mona-max npm publish && cd ../mona-plugin-events && npm publish && cd ../mona-runtime && npm publish && cd ../mona-service && npm publish && cd ../mona-shared && npm publish"
   },
   "repository": {
     "type": "git",
