@@ -58,7 +58,8 @@ class ConfigHelper {
   readAllConfig() {
     const configFile = getConfigPath();
     this.projectConfig = merge(genDefaultProjectConfig(this.cwd), this._readConfig<ProjectConfig>(configFile));
-    this.appConfig = merge(DEFAULT_APP_CONFIG, this._readConfig<AppConfig>('app.config'));
+    // todo 官方默认配置为 app.config 跟我们项目的冲突了
+    this.appConfig = merge(DEFAULT_APP_CONFIG, this._readConfig<AppConfig>('mona.app.config'));
     this.entryPath = searchScriptFile(path.resolve(this.cwd, this.projectConfig.input));
   }
 
